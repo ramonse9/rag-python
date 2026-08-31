@@ -1,0 +1,4 @@
+Alembic migration environment for the RAG API.
+
+The initial revision represents the schema originally created by TypeORM.
+Existing databases must be stamped at that revision instead of upgrading to it.

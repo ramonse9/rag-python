@@ -31,6 +31,11 @@ from app.documents.pdf_service import (
     PDFService,
 )
 
+from app.documents.langchain_service import (
+    LangChainDocumentsService,
+    get_langchain_documents_service,
+)
+
 router = APIRouter(
     prefix="/rag",
     tags=["RAG"],
@@ -179,12 +184,16 @@ async def ask_documents(
 )
 async def ask_documents_with_langchain(
     request: AskDocumentsRequest,
+    service: Annotated[
+        LangChainDocumentsService,
+        Depends(get_langchain_documents_service),
+    ],
 ) -> RagAnswerResponse:
     """
-    Variante del endpoint RAG implementada con LangChain.
+    Responde mediante un retriever y una cadena de LangChain.
     """
 
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="LangChain question answering is not implemented yet.",
+    return await service.ask(
+        question=request.question,
+        top_k=request.top_k,
     )

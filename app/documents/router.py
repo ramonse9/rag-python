@@ -18,9 +18,10 @@ from app.documents.schemas import (
 )
 
 from app.documents.service import (
+    DocumentAlreadyExistsError,
     DocumentsService,
+    DocumentValidationError,
     get_documents_service,
-    DocumentValidationError
 )
 
 from anyio import to_thread
@@ -115,6 +116,11 @@ async def ingest_document(
             filename=filename,
             text=extracted_text,
         )
+    except DocumentAlreadyExistsError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(error),
+        ) from error
     except DocumentValidationError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

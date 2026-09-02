@@ -25,6 +25,14 @@ class DocumentValidationError(ValueError):
     """El documento recibido no contiene datos válidos"""
     pass
 
+
+class DocumentAlreadyExistsError(RuntimeError):
+    """
+    Indica que la aplicación ya tiene un documento registrado.
+    """
+
+    pass
+
 class DocumentsService:
     """
     Contiene la lógica de negocio relacionada con documentos.
@@ -39,6 +47,21 @@ class DocumentsService:
         self.session_factory = session_factory
         self.text_cleaner = TextCleaningService()
         self.chunker = ChunkingService()
+
+    def _document_exists(self) -> bool:
+        """
+        Comprueba si existe al menos un documento.
+        """
+
+        statement = (
+            select(Document.id)
+            .limit(1)
+        )
+
+        with self.session_factory() as session:
+            document_id = session.scalar(statement)
+
+        return document_id is not None
 
     async def search(
         self,
@@ -118,6 +141,16 @@ class DocumentsService:
         Limpia el texto, genera chunks y embeddings,
         y guarda el documento completo.
         """
+
+        document_exists = await to_thread.run_sync(
+            self._document_exists,
+        )
+
+        if document_exists:
+            raise DocumentAlreadyExistsError(
+                "A document is already registered. "
+                "Delete it before uploading another one."
+            )
 
         if not filename.strip():
             raise DocumentValidationError(

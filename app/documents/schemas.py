@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from datetime import datetime
+
 
 class ApiSchema(BaseModel):
     """
@@ -63,6 +65,16 @@ class IngestDocumentResponse(ApiSchema):
 
     document_id: UUID = Field(alias="documentId")
     filename: str
+    chunks: int
+
+class DocumentSummary(ApiSchema):
+    """
+    Información resumida de un documento almacenado.
+    """
+
+    id: UUID
+    filename: str
+    created_at: datetime = Field(alias="createdAt")
     chunks: int
 
 

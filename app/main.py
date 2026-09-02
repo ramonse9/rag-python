@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.documents.router import router as documents_router
 
+from app.documents.router import router as documents_router
+from app.documents.management_router import (
+    router as document_management_router,
+)
 
 settings = get_settings()
 
@@ -22,6 +26,11 @@ app.add_middleware(
 
 app.include_router(
     documents_router,
+    prefix=settings.api_prefix,
+)
+
+app.include_router(
+    document_management_router,
     prefix=settings.api_prefix,
 )
 

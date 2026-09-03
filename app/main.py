@@ -4,9 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.documents.router import router as documents_router
 
-from app.documents.router import router as documents_router
 from app.documents.management_router import (
     router as document_management_router,
+)
+
+from app.job_analysis.router import (
+    router as job_analysis_router,
 )
 
 settings = get_settings()
@@ -31,6 +34,11 @@ app.include_router(
 
 app.include_router(
     document_management_router,
+    prefix=settings.api_prefix,
+)
+
+app.include_router(
+    job_analysis_router,
     prefix=settings.api_prefix,
 )
 

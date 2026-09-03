@@ -10,3 +10,4 @@ pypdf>=6.0,<7.0
 python-multipart>=0.0.20,<1.0
 langchain-core>=1.6,<2.0
 langchain-openai>=1.6,<2.0
+langgraph>=1.2,<2.0
